@@ -14,10 +14,10 @@ void main(List<String> arguments) {
   String license = defaultLicense;
   String licenseTestString = '// Copyright (c)';
 
-  var yamlFile = [
-    File('${dir.path}/health.yaml'),
-    File('${dir.path}/health.yml'),
-  ].firstWhere((f) => f.existsSync(), orElse: () => File(''));
+  final yamlFile = dir.listSync(recursive: true).whereType<File>().firstWhere(
+        (f) => f.path.endsWith('health.yaml') || f.path.endsWith('health.yml'),
+        orElse: () => File(''),
+      );
 
   if (yamlFile.path.isNotEmpty) {
     try {
@@ -25,14 +25,19 @@ void main(List<String> arguments) {
       final foundLicense = _findRecursive(doc, 'license');
       final foundTestString = _findRecursive(doc, 'license_test_string');
 
-      if (foundLicense != null) license = foundLicense.toString();
-      if (foundTestString != null)
+      if (foundLicense != null) {
+        print('Found license: $foundLicense');
+        license = foundLicense.toString();
+      }
+      if (foundTestString != null) {
+        print('Found license test string: $foundTestString');
         licenseTestString = foundTestString.toString();
+      }
     } catch (e) {
       stderr.writeln('Warning: Failed to parse ${yamlFile.path}: $e');
     }
   }
-
+  license = license.replaceAll('%YEAR%', DateTime.now().year.toString());
   // CLI Override
   if (arguments.length > 1) {
     license = File(arguments[1]).readAsStringSync();
