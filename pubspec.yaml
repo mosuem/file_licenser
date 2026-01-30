@@ -1,5 +1,5 @@
 name: file_licenser
-description: A simple command-line application to add licenses to all dart files in a directory.
+description: A command-line application to add licenses to all dart files in a directory.
 version: 3.0.0
 repository: https://github.com/mosuem/file_licenser
 
